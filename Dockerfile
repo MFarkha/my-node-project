@@ -1,9 +1,9 @@
 FROM node:19-alpine
 
-RUN mkdir -p /home/app
-COPY app/* /home/app/
+RUN mkdir -p /home/my-node-app
+COPY . /home/app
 
-WORKDIR /home/app
+WORKDIR /home/my-node-app/app
 EXPOSE 3000
 
 RUN npm install
