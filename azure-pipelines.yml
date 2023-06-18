@@ -19,9 +19,9 @@ steps:
     cd app
     npm install
   displayName: 'npm install'
-
-- task: PublishBuildArtifacts@1
+- task: DownloadBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'server.js'
-    publishLocation: 'Container'
+    buildType: 'current'
+    downloadType: 'specific'
+    itemPattern: '*.js'
+    downloadPath: '$(System.ArtifactsDirectory)'
