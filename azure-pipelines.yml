@@ -19,8 +19,15 @@ steps:
     cd app
     npm install
   displayName: 'npm install'
-- task: DownloadPipelineArtifact@2
+- task: ArchiveFiles@2
   inputs:
-    buildType: 'current'
-    itemPattern: '**.js'
-    targetPath: '$(Pipeline.Workspace)'
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
