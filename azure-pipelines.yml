@@ -10,15 +10,10 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- task: NodeTool@0
+- task: Npm@1
   inputs:
-    versionSpec: '19.x'
-  displayName: 'Install Node.js'
-
-- script: |
-    cd app
-    npm install
-  displayName: 'npm install'
+    command: 'install'
+    workingDir: 'app/'
 - task: ArchiveFiles@2
   inputs:
     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/app'
