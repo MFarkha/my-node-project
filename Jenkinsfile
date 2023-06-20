@@ -42,17 +42,13 @@ pipeline {
         }
         stage('Build and Push docker image into AWS ECR') {
             steps {
-                sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
-                // configure registry
-                docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com', 'ecr-credentials') {
-
-                    // build image
-                    def customImage = docker.build("${IMAGE_NAME}")
-
-                    // push image
-                    customImage.push()
-                }
-
+               script {
+                    // sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
+                    docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com', 'ecr-credentials'){
+                        def customImage = docker.build("${IMAGE_NAME}")
+                        customImage.push()
+                    }
+               }
                 // withCredentials([usernamePassword(credentialsId: 'ecr-credentials', usernameVariable: 'USER', passwordVariable: 'PWD')]){
                 //     sh "docker build -t 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME} ."
                 //     sh "echo ${PWD} | docker login --username AWS --password-stdin 146966035049.dkr.ecr.ca-central-1.amazonaws.com"
