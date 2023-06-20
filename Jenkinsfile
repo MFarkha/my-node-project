@@ -54,8 +54,8 @@ pipeline {
                 // }
 
                 withCredentials([usernamePassword(credentialsId: 'ecr-credentials', usernameVariable: 'USER', passwordVariable: 'PWD')]){
-                    sh 'echo ${PWD} | docker login --username AWS --password-stdin 146966035049.dkr.ecr.ca-central-1.amazonaws.com'
                     sh "docker build -t 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME} ."
+                    sh "echo ${PWD} | docker login --username AWS --password-stdin 146966035049.dkr.ecr.ca-central-1.amazonaws.com"
                     sh "docker push 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME}"
                 }
             }
