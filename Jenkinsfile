@@ -27,13 +27,13 @@ pipeline {
         //         }
         //     }
         // }
-        env.IMAGE_NAME = "my-node-app-1.1.0-$BUILD_NUMBER"
         stage('Run tests') {
             steps {
                script {
                     // # enter app directory, because that's where package.json and tests are located
                     dir("app") {
                         // # install all dependencies needed for running tests
+                        env.IMAGE_NAME = "my-node-app-1.1.0-$BUILD_NUMBER"
                         sh "npm install"
                         // sh "npm run test"
                     } 
