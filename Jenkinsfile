@@ -44,7 +44,7 @@ pipeline {
                 script {
                     sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
                     docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com', 'ecr-credentials') {
-                        def customImage = docker.build("${IMAGE_NAME}")
+                        def customImage = docker.build("famaten:${IMAGE_NAME}")
                         customImage.push()
                     }
                     // withCredentials([usernamePassword(credentialsId: 'ecr-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]){
