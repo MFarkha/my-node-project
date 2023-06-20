@@ -16,14 +16,14 @@ pipeline {
                         // npm version minor
                         // # read the updated version from the package.json file
                         def packageJson = readJSON file: 'package.json'
-                        assert packageJson['version'] == '1.1.0'
+                        // assert packageJson['version'] == '1.1.0'
                         def version = packageJson.version
                         sh "echo ${version}"
                         // # set the new version as part of IMAGE_NAME
                     //     env.IMAGE_NAME = "my-node-app-$version-$BUILD_NUMBER"
                     // alternative solution without Pipeline Utility Steps plugin: 
                         // def version = sh (returnStdout: true, script: "grep 'version' package.json | cut -d '\"' -f4 | tr '\\n' '\\0'")
-                        // env.IMAGE_NAME = "my-node-app-$version-$BUILD_NUMBER"
+                        env.IMAGE_NAME = "my-node-app-${version}-${BUILD_NUMBER}"
                     }
                 }
             }
