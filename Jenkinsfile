@@ -46,16 +46,16 @@ pipeline {
             steps {
                 script {
                     // sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
-                    docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com', 'ecr-credentials') {
-                        def customImage = docker.build("${IMAGE_NAME}")
-                        customImage.push()
+                    // docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com', 'ecr-credentials') {
+                    //     def customImage = docker.build("${IMAGE_NAME}")
+                    //     customImage.push()
+                    // }
+                    withCredentials([usernamePassword(credentialsId: 'ecr-credentials', usernameVariable: 'USER', passwordVariable: 'PWD')]){
+                        sh "docker build -t 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME} ."
+                        sh "echo ${PWD} | docker login --username AWS --password-stdin 146966035049.dkr.ecr.ca-central-1.amazonaws.com"
+                        sh "docker push 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME}"
                     }
                 }
-                // withCredentials([usernamePassword(credentialsId: 'ecr-credentials', usernameVariable: 'USER', passwordVariable: 'PWD')]){
-                //     sh "docker build -t 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME} ."
-                //     sh "echo ${PWD} | docker login --username AWS --password-stdin 146966035049.dkr.ecr.ca-central-1.amazonaws.com"
-                //     sh "docker push 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME}"
-                // }
             }
         }
         stage('commit version update') {
