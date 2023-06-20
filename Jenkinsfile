@@ -13,9 +13,10 @@ pipeline {
                     dir("app") {
                     //     // # update application version in the package.json file with one of these release types: patch, minor or major
                     //     // # this will commit the version update
-                        npm version minor
+                        // npm version minor
                         // # read the updated version from the package.json file
                         def packageJson = readJSON file: 'package.json'
+                        assert packageJson.version == '1.1.0'
                         def version = packageJson.version
                         sh "echo ${version}"
                         // # set the new version as part of IMAGE_NAME
