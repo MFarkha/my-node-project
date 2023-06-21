@@ -42,16 +42,16 @@ pipeline {
         stage('Build and Push docker image into AWS ECR') {
             steps {
                 script {
-                    sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
-                    docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com', 'ecr-credentials') {
-                        def customImage = docker.build("famaten:${IMAGE_NAME}")
-                        customImage.push()
-                    }
-                    // withCredentials([usernamePassword(credentialsId: 'ecr-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]){
-                    //     sh "docker build -t 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME} ."
-                    //     sh 'echo $PASS | docker login --username AWS --password-stdin 146966035049.dkr.ecr.ca-central-1.amazonaws.com'
-                    //     sh "docker push 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME}"
+                    // sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
+                    // docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com', 'ecr-credentials') {
+                    //     def customImage = docker.build("famaten:${IMAGE_NAME}")
+                    //     customImage.push()
                     // }
+                    withCredentials([usernamePassword(credentialsId: 'ecr-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]){
+                        sh "docker build -t 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME} ."
+                        sh 'echo $PASS | docker login --username AWS --password-stdin 146966035049.dkr.ecr.ca-central-1.amazonaws.com'
+                        sh "docker push 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME}"
+                    }
                 }
             }
         }
