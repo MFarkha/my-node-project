@@ -1,12 +1,16 @@
 pipeline {
-    agent { 
-        label 'agent5' 
-    } 
+    // agent { 
+    //     label 'agent5' 
+    // } 
+    agent none
     tools {
         nodejs "node"
     }
     stages {
         stage('increment version') {
+            agent {
+                docker { image 'node:20-alpine' }
+            }
             steps {
                 script {
                     // # enter app directory, because that's where package.json is located
@@ -27,6 +31,9 @@ pipeline {
             }
         }
         stage('Run tests') {
+            agent {
+                docker { image 'node:20-alpine' }
+            }
             steps {
                script {
                     // # enter app directory, because that's where package.json and tests are located
@@ -40,6 +47,9 @@ pipeline {
             }
         }
         stage('Build and Push docker image into AWS ECR') {
+            agent {
+                docker { image 'docker:git' }
+            }
             steps {
                 script {
                     // sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
@@ -56,6 +66,9 @@ pipeline {
             }
         }
         stage('commit version update') {
+            agent {
+                docker { image 'docker:git' }
+            }
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
@@ -67,7 +80,7 @@ pipeline {
                         sh 'git add .'
                         sh 'git commit -m "ci: version bump"'
                         // sh 'git push origin HEAD:jenkins-jobs'
-                        sh 'git push origin'
+                        sh 'git push origin HEAD:master'
                     }
                 }
             }
