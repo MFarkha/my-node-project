@@ -1,10 +1,3 @@
-FROM node:19-alpine
+FROM node:20-alpine
 
-RUN mkdir -p /home/my-node-app
-COPY . /home/my-node-app
-
-WORKDIR /home/my-node-app/app
-EXPOSE 3000
-
-RUN npm install
-CMD ["node", "server.js"]
+RUN apk fix && apk --no-cache --update add git git-lfs gpg less openssh patch

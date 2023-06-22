@@ -53,21 +53,15 @@ pipeline {
             }
         }
         stage('Build and Push docker image into AWS ECR') {
-            // agent {
-            //     docker {
-            //         image 'docker:latest'
-            //         args "--entrypoint=''"
-            //         reuseNode true
-            //     }
-            // }
             steps {
                 script {
                     node {
                         // sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
                         docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com', 'ecr-credentials') {
-                            // git '…'
                             checkout scm
-                            docker.build("famaten:${IMAGE_NAME}").push()
+                            dir("app"){
+                                docker.build("famaten:${IMAGE_NAME}").push()
+                            }
                         }
                     }
                     // withCredentials([usernamePassword(credentialsId: 'ecr-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]){
@@ -79,24 +73,30 @@ pipeline {
             }
         }
         stage('commit version update') {
-            agent {
-                docker {
-                    image 'alpine/git:latest' 
-                    reuseNode true
-                }
-            }
+            // agent {
+            //     docker {
+            //         image 'alpine/git:latest' 
+            //         reuseNode true
+            //     }
+            // }
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        // # git config here for the first time run
-                        sh 'git config --global user.email "jenkins@example.com"'
-                        sh 'git config --global user.name "jenkins"'
+                    node {
+                        checkout scm
+                        def myBuildImage = docker.build 'my-build:1.0'
+                        myBuildImage.Inside {
+                            withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                                // # git config here for the first time run
+                                sh 'git config --global user.email "jenkins@example.com"'
+                                sh 'git config --global user.name "jenkins"'
 
-                        sh 'git remote set-url origin https://$USER:$PASS@github.com/MFarkha/my-node-project.git'
-                        sh 'git add .'
-                        sh 'git commit -m "ci: version bump"'
-                        // sh 'git push origin HEAD:jenkins-jobs'
-                        sh 'git push origin HEAD:master'
+                                sh 'git remote set-url origin https://$USER:$PASS@github.com/MFarkha/my-node-project.git'
+                                sh 'git add .'
+                                sh 'git commit -m "ci: version bump"'
+                                // sh 'git push origin HEAD:jenkins-jobs'
+                                sh 'git push origin HEAD:master'
+                            }
+                        }
                     }
                 }
             }
