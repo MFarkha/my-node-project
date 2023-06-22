@@ -5,9 +5,9 @@ pipeline {
     agent {
         dockerfile true 
     }
-    // tools {
-    //     nodejs "node"
-    // }
+    tools {
+        nodejs "node"
+    }
     stages {
         stage('increment version') {
             steps {
@@ -36,7 +36,6 @@ pipeline {
                     dir("app") {
                         // # install all dependencies needed for running tests
                         // env.IMAGE_NAME = "my-node-app-1.1.0-$BUILD_NUMBER"
-                        sh 'sudo chown -R 1000:1001 "/.npm"'
                         sh "npm install"
                         // sh "npm run test"
                     }
