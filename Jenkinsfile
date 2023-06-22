@@ -2,18 +2,14 @@ pipeline {
     // agent { 
     //     label 'agent5' 
     // } 
-    agent none
-    tools {
-        nodejs "node"
+    agent {
+        dockerfile true 
     }
+    // tools {
+    //     nodejs "node"
+    // }
     stages {
         stage('increment version') {
-            agent {
-                docker {
-                    image 'node:20-alpine' 
-                    reuseNode true
-                }
-            }
             steps {
                 script {
                     // # enter app directory, because that's where package.json is located
@@ -34,12 +30,6 @@ pipeline {
             }
         }
         stage('Run tests') {
-            agent {
-                docker {
-                    image 'node:20-alpine' 
-                    reuseNode true
-                }
-            }
             steps {
                script {
                     // # enter app directory, because that's where package.json and tests are located
@@ -48,20 +38,17 @@ pipeline {
                         // env.IMAGE_NAME = "my-node-app-1.1.0-$BUILD_NUMBER"
                         sh "npm install"
                         // sh "npm run test"
-                    } 
+                    }
                }
             }
         }
         stage('Build and Push docker image into AWS ECR') {
             steps {
                 script {
-                    node {
-                        // sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
-                        docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com', 'ecr-credentials') {
-                            checkout scm
-                            dir("app"){
-                                docker.build("famaten:${IMAGE_NAME}").push()
-                            }
+                    // sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
+                    docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com', 'ecr-credentials') {
+                        dir("app"){
+                            docker.build("famaten:${IMAGE_NAME}").push()
                         }
                     }
                     // withCredentials([usernamePassword(credentialsId: 'ecr-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]){
@@ -73,30 +60,21 @@ pipeline {
             }
         }
         stage('commit version update') {
-            // agent {
-            //     docker {
-            //         image 'alpine/git:latest' 
-            //         reuseNode true
-            //     }
-            // }
             steps {
                 script {
-                    node {
-                        checkout scm
-                        withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                            def myBuildImage = docker.build 'my-build:1.0'
-                            myBuildImage.inside {
-                                // # git config here for the first time run
-                                sh 'git config --global user.email "jenkins@example.com"'
-                                sh 'git config --global user.name "jenkins"'
+                    withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        // def myBuildImage = docker.build 'my-build:1.0'
+                        // myBuildImage.inside {
+                            // # git config here for the first time run
+                        sh 'git config --global user.email "jenkins@example.com"'
+                        sh 'git config --global user.name "jenkins"'
 
-                                sh 'git remote set-url origin https://$USER:$PASS@github.com/MFarkha/my-node-project.git'
-                                sh 'git add .'
-                                sh 'git commit -m "ci: version bump"'
-                                // sh 'git push origin HEAD:jenkins-jobs'
-                                sh 'git push origin HEAD:master'
-                            }
-                        }
+                        sh 'git remote set-url origin https://$USER:$PASS@github.com/MFarkha/my-node-project.git'
+                        sh 'git add .'
+                        sh 'git commit -m "ci: version bump"'
+                        // sh 'git push origin HEAD:jenkins-jobs'
+                        sh 'git push origin HEAD:master'
+                        // }
                     }
                 }
             }
