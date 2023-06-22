@@ -81,7 +81,7 @@ pipeline {
         stage('commit version update') {
             agent {
                 docker {
-                    image 'alpine:git' 
+                    image 'alpine/git:latest' 
                     reuseNode true
                 }
             }
