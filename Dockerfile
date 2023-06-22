@@ -4,10 +4,10 @@ FROM docker:cli
 # RUN apk fix && apk --no-cache --update add git git-lfs gpg less openssh patch
 RUN apk fix && apk --no-cache --update add git git-lfs gpg less openssh patch npm
 
-RUN groupadd -r build-user && useradd -r -s /bin/false -g build-user build-user
-WORKDIR /app
-COPY . /app
-RUN chown -R build-user:build-user /app
+RUN addgroup -S build-user && adduser -S build-user -G build-user
+WORKDIR /my-app
+COPY . /my-app
+RUN chown -R build-user:build-user /my-app
 USER build-user
 
 CMD ["/bin/sh"]
