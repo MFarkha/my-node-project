@@ -5,9 +5,9 @@ pipeline {
     agent {
         dockerfile true 
     }
-    tools {
-        nodejs "node"
-    }
+    // tools {
+    //     nodejs "node"
+    // }
     stages {
         stage('increment version') {
             steps {
