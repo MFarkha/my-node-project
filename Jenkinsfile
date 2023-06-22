@@ -9,7 +9,10 @@ pipeline {
     stages {
         stage('increment version') {
             agent {
-                docker { image 'node:20-alpine' }
+                docker {
+                    image 'node:20-alpine' 
+                    reuseNode true
+                }
             }
             steps {
                 script {
@@ -32,7 +35,10 @@ pipeline {
         }
         stage('Run tests') {
             agent {
-                docker { image 'node:20-alpine' }
+                docker {
+                    image 'node:20-alpine' 
+                    reuseNode true
+                }
             }
             steps {
                script {
@@ -48,7 +54,11 @@ pipeline {
         }
         stage('Build and Push docker image into AWS ECR') {
             agent {
-                docker { image 'docker:latest' }
+                docker {
+                    image 'docker:latest'
+                    args "--entrypoint=''"
+                    reuseNode true
+                }
             }
             steps {
                 script {
@@ -67,7 +77,10 @@ pipeline {
         }
         stage('commit version update') {
             agent {
-                docker { image 'alpine:git' }
+                docker {
+                    image 'alpine:git' 
+                    reuseNode true
+                }
             }
             steps {
                 script {
