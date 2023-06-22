@@ -65,7 +65,8 @@ pipeline {
                     node {
                         // sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
                         docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com', 'ecr-credentials') {
-                            git '…'
+                            // git '…'
+                            checkout scm
                             docker.build("famaten:${IMAGE_NAME}").push()
                         }
                     }
