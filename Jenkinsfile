@@ -83,9 +83,9 @@ pipeline {
                 script {
                     node {
                         checkout scm
-                        def myBuildImage = docker.build 'my-build:1.0'
-                        myBuildImage.Inside {
-                            withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                        withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                            def myBuildImage = docker.build 'my-build:1.0'
+                            myBuildImage.inside {
                                 // # git config here for the first time run
                                 sh 'git config --global user.email "jenkins@example.com"'
                                 sh 'git config --global user.name "jenkins"'
