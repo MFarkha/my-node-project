@@ -48,7 +48,7 @@ pipeline {
         }
         stage('Build and Push docker image into AWS ECR') {
             agent {
-                docker { image 'docker:git' }
+                docker { image 'docker:latest' }
             }
             steps {
                 script {
@@ -67,7 +67,7 @@ pipeline {
         }
         stage('commit version update') {
             agent {
-                docker { image 'docker:git' }
+                docker { image 'alpine:git' }
             }
             steps {
                 script {
