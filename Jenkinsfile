@@ -36,6 +36,7 @@ pipeline {
                     dir("app") {
                         // # install all dependencies needed for running tests
                         // env.IMAGE_NAME = "my-node-app-1.1.0-$BUILD_NUMBER"
+                        sh "npm cache clean --force"
                         sh "npm install"
                         // sh "npm run test"
                     }
