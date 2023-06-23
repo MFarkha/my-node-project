@@ -1,4 +1,4 @@
-FROM node:19-alpine
+FROM node:18-alpine
 
 RUN mkdir -p /home/my-node-app
 COPY . /home/my-node-app

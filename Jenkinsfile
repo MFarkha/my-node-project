@@ -55,9 +55,14 @@ pipeline {
                     // }
                     // sh 'printenv | grep AWS'
                     // sh 'aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin 146966035049.dkr.ecr.ca-central-1.amazonaws.com'
-                    dir("app") {
-                        sh "docker build -t 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME} ."
-                        sh "docker push 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME}"
+                    // dir("app") {
+                    //     sh "docker build -t 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME} ."
+                    //     sh "docker push 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME}"
+                    // }
+                    docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com') {
+                        dir("app"){
+                            docker.build("famaten:${IMAGE_NAME}").push()
+                        }
                     }
                     // withCredentials([usernamePassword(credentialsId: 'ecr-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]){
                     //     sh "docker build -t 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME} ."
