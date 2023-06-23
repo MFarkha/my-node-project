@@ -7,10 +7,7 @@ pipeline {
     agent {
         dockerfile {
             // label 'agent5'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-            args "-e AWS_DEFAULT_REGION=${env.AWS_DEFAULT_REGION}"
-            args "-e AWS_SECRET_ACCESS_KEY=${env.AWS_SECRET_ACCESS_KEY}"
-            args "-e AWS_ACCESS_KEY=${env.AWS_ACCESS_KEY}"
+            args "-v /var/run/docker.sock:/var/run/docker.sock -e AWS_DEFAULT_REGION=${env.AWS_DEFAULT_REGION} -e AWS_SECRET_ACCESS_KEY=${env.AWS_SECRET_ACCESS_KEY} -e AWS_ACCESS_KEY=${env.AWS_ACCESS_KEY}"
         }
     }
     stages {
