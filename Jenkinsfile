@@ -1,10 +1,14 @@
 pipeline {
-    // agent { 
-    //     label 'agent5' 
-    // } 
+    script {
+        node {
+            sh 'sudo chmod 666 /var/run/docker.sock'
+        }
+    }
     agent {
-        dockerfile true
-        args '-v /var/run/docker.sock:/var/run/docker.sock'
+        dockerfile {
+            // label 'agent5'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
     }
     // tools {
     //     nodejs "node"
