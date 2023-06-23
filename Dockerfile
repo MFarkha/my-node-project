@@ -2,7 +2,7 @@
 # FROM docker:dind
 FROM alpine:latest
 
-RUN apk fix && apk --no-cache --update add git git-lfs gpg less openssh patch nodejs npm sudo docker aws-cli
+RUN apk fix && apk --no-cache --update add git git-lfs gpg less openssh patch nodejs npm sudo docker aws-cli docker-credential-ecr-login
 
 RUN addgroup build-user && adduser -D build-user -G build-user
 
@@ -17,5 +17,7 @@ RUN adduser build-user docker
 
 USER build-user
 WORKDIR /home/build-user/app
+
+RUN mkdir -p /home/build-user/.docker && echo '{    "credsStore": "ecr-login"   }' >> /home/build-user/.docker/config.json 
 
 CMD ["/bin/sh"]
