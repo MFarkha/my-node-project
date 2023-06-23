@@ -10,9 +10,6 @@ pipeline {
             args '-v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
-    // tools {
-    //     nodejs "node"
-    // }
     stages {
         stage('increment version') {
             steps {
@@ -40,9 +37,8 @@ pipeline {
                     // # enter app directory, because that's where package.json and tests are located
                     dir("app") {
                         // # install all dependencies needed for running tests
-                        // env.IMAGE_NAME = "my-node-app-1.1.0-$BUILD_NUMBER"
                         // sh "export npm_config_cache=npm-cache"
-                        // sh "npm install"
+                        sh "npm install"
                         // sh "npm run test"
                     }
                }
@@ -69,18 +65,14 @@ pipeline {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        // def myBuildImage = docker.build 'my-build:1.0'
-                        // myBuildImage.inside {
-                            // # git config here for the first time run
+                        // # git config here for the first time run
                         sh 'git config --global user.email "jenkins@example.com"'
                         sh 'git config --global user.name "jenkins"'
-
                         sh 'git remote set-url origin https://$USER:$PASS@github.com/MFarkha/my-node-project.git'
                         sh 'git add .'
                         sh 'git commit -m "ci: version bump"'
                         // sh 'git push origin HEAD:jenkins-jobs'
                         sh 'git push origin HEAD:master'
-                        // }
                     }
                 }
             }
