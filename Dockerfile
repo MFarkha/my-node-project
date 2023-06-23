@@ -2,7 +2,7 @@
 # FROM docker:dind
 FROM alpine:latest
 
-RUN apk fix && apk --no-cache --update add git git-lfs gpg less openssh patch nodejs npm sudo docker
+RUN apk fix && apk --no-cache --update add git git-lfs gpg less openssh patch nodejs npm sudo docker aws-cli
 
 RUN addgroup build-user && adduser -D build-user -G build-user
 

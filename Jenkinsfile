@@ -8,6 +8,9 @@ pipeline {
         dockerfile {
             // label 'agent5'
             args '-v /var/run/docker.sock:/var/run/docker.sock'
+            args "-e AWS_DEFAULT_REGION=${env.AWS_DEFAULT_REGION}"
+            args "-e AWS_SECRET_ACCESS_KEY=${env.AWS_SECRET_ACCESS_KEY}"
+            args "-e AWS_ACCESS_KEY=${env.AWS_ACCESS_KEY}"
         }
     }
     stages {
@@ -18,6 +21,7 @@ pipeline {
                     dir("app") {
                     //     // # update application version in the package.json file with one of these release types: patch, minor or major
                     //     // # this will commit the version update
+                        sh 'printenv'
                         sh "npm version minor"
                         // # read the updated version from the package.json file
                         def packageJson = readJSON file: 'package.json'
