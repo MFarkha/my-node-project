@@ -21,7 +21,6 @@ pipeline {
                     dir("app") {
                     //     // # update application version in the package.json file with one of these release types: patch, minor or major
                     //     // # this will commit the version update
-                        sh 'printenv'
                         sh "npm version minor"
                         // # read the updated version from the package.json file
                         def packageJson = readJSON file: 'package.json'
@@ -51,12 +50,15 @@ pipeline {
         stage('Build and Push docker image into AWS ECR') {
             steps {
                 script {
-                    sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
-                    docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com', 'ecr-credentials') {
-                        dir("app"){
-                            docker.build("famaten:${IMAGE_NAME}").push()
-                        }
-                    }
+                    // sh 'rm -f ~/.dockercfg ~/.docker/config.json || true'
+                    // docker.withRegistry('https://146966035049.dkr.ecr.ca-central-1.amazonaws.com', 'ecr-credentials') {
+                    //     dir("app"){
+                    //         docker.build("famaten:${IMAGE_NAME}").push()
+                    //     }
+                    // }
+                    sh 'aws ecr get-login-password --region ca-central-1 | docker login --username AWS --password-stdin 146966035049.dkr.ecr.ca-central-1.amazonaws.com'
+                    sh "docker build -t 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME} ."
+                    sh "docker push 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME}"
                     // withCredentials([usernamePassword(credentialsId: 'ecr-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]){
                     //     sh "docker build -t 146966035049.dkr.ecr.ca-central-1.amazonaws.com/famaten:${IMAGE_NAME} ."
                     //     sh 'echo $PASS | docker login --username AWS --password-stdin 146966035049.dkr.ecr.ca-central-1.amazonaws.com'
