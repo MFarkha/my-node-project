@@ -3,7 +3,8 @@ pipeline {
     //     label 'agent5' 
     // } 
     agent {
-        dockerfile true 
+        dockerfile true
+        args '-v /var/run/docker.sock:/var/run/docker.sock'
     }
     // tools {
     //     nodejs "node"

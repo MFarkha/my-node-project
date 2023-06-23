@@ -1,13 +1,20 @@
 # FROM node:20-alpine
-FROM docker:cli
+# FROM docker:dind
 
-# RUN apk fix && apk --no-cache --update add git git-lfs gpg less openssh patch
-RUN apk fix && apk --no-cache --update add git git-lfs gpg less openssh patch npm
+FROM alpine:latest
 
-RUN addgroup -S build-user && adduser -S build-user -G build-user
+RUN apk fix && apk --no-cache --update add git git-lfs gpg less openssh patch nodejs npm sudo docker
+
+RUN addgroup -S build-user && adduser -D -H -S build-user -G build-user
 WORKDIR /my-app
 COPY . /my-app
 RUN chown -R build-user:build-user /my-app
+
+RUN echo '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/wheel
+RUN adduser build-user wheel
+
+RUN adduser build-user docker
+
 USER build-user
 
 CMD ["/bin/sh"]
