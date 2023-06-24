@@ -1,7 +1,7 @@
 node {
     def mybuild
     def AWS_REGISTRY = 'https://146966035049.dkr.ecr.ca-central-1.amazonaws.com'
-    def DOCKER_GROUP_ID = sh (returnStdout: true, script: "stat -f %g /var/run/docker.sock")
+    def DOCKER_GROUP_ID = sh (returnStdout: true, script: "stat -c %g /var/run/docker.sock")
  
     stage('init and prepare build environment'){
         checkout scm
