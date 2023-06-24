@@ -1,7 +1,7 @@
 node {
     def mybuild = docker.build 'mybuild:1.0'
     
-    stage 'increment version'{
+    stage ('increment version'){
         mybuild.inside {
             checkout scm
             dir("app") {
@@ -12,7 +12,7 @@ node {
             }
         }
     }
-    stage 'run tests and install' {
+    stage ('run tests and install') {
         mybuild.inside {
             sh 'ls -la .'
             // sh 'npm install'
