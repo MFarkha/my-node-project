@@ -28,12 +28,10 @@ node {
     }
 
     stage('build and push docker image into AWS ECR') {
-        mybuild.withRun("--group-add=115 -v /var/run/docker.sock:/var/run/docker.sock -e AWS_DEFAULT_REGION=${env.AWS_DEFAULT_REGION} -e AWS_SECRET_ACCESS_KEY=${env.AWS_SECRET_ACCESS_KEY} -e AWS_ACCESS_KEY=${env.AWS_ACCESS_KEY}") { c ->
-            mybuild.inside {
-                dir("app") {
-                    docker.withRegistry("${AWS_REGISTRY}") {
-                        docker.build("famaten:${IMAGE_NAME}").push()
-                    }
+        mybuild.inside("--group-add=115 -v /var/run/docker.sock:/var/run/docker.sock -e AWS_DEFAULT_REGION=${env.AWS_DEFAULT_REGION} -e AWS_SECRET_ACCESS_KEY=${env.AWS_SECRET_ACCESS_KEY} -e AWS_ACCESS_KEY=${env.AWS_ACCESS_KEY}") {
+            dir("app") {
+                docker.withRegistry("${AWS_REGISTRY}") {
+                    docker.build("famaten:${IMAGE_NAME}").push()
                 }
             }
         }
