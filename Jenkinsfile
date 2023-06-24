@@ -1,6 +1,12 @@
 node {
-    def mybuild = docker.build 'mybuild:1.0'
+    def mybuild
+    def AWS_REGISTRY = 'https://146966035049.dkr.ecr.ca-central-1.amazonaws.com'
     
+    stage('init and prepare build environment'){
+        checkout scm
+        mybuild = docker.build 'mybuild:1.0'
+    }
+
     stage ('increment version'){
         mybuild.inside {
             checkout scm
@@ -14,10 +20,38 @@ node {
     }
     stage ('run tests and install') {
         mybuild.inside {
-            sh 'ls -la .'
-            // sh 'npm install'
+            dir("app") {
+                sh 'ls -la .'
+                sh 'npm install'
+            }
         }
     }
+
+    stage('build and push docker image into AWS ECR') {
+        mybuild.withRun("--group-add=115 -v /var/run/docker.sock:/var/run/docker.sock -e AWS_DEFAULT_REGION=${env.AWS_DEFAULT_REGION} -e AWS_SECRET_ACCESS_KEY=${env.AWS_SECRET_ACCESS_KEY} -e AWS_ACCESS_KEY=${env.AWS_ACCESS_KEY}") { c ->
+            mybuild.inside {
+                dir("app") {
+                    docker.withRegistry("${AWS_REGISTRY}") {
+                        docker.build("famaten:${IMAGE_NAME}").push()
+                    }
+                }
+            }
+        }
+    }
+
+    // stage('increment version') {
+    //     mybuild.inside {
+    //         withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+    //             sh 'git config --global user.email "jenkins@example.com"'
+    //             sh 'git config --global user.name "jenkins"'
+    //             sh 'git remote set-url origin https://$USER:$PASS@github.com/MFarkha/my-node-project.git'
+    //             sh 'git add .'
+    //             sh 'git commit -m "ci: version bump"'
+    //             sh 'git push origin HEAD:alt_groovy-Jenkinsfile'
+    //         }
+    //     }
+    // }
+
 }
 //     def maven = docker.image('maven:3.3.9-jdk-8'); // https://registry.hub.docker.com/_/maven/
 
