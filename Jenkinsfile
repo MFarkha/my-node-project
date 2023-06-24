@@ -1,10 +1,10 @@
 node {
     stage 'init: prepare build environment'
     checkout scm
-    def my-build = docker.build 'my-build:${BUILD_NUMBER}'
+    def mybuild = docker.build 'mybuild:${BUILD_NUMBER}'
     
     stage 'increment version'
-    my-build.inside {
+    mybuild.inside {
         checkout scm
         dir("app") {
             sh "npm version minor"
@@ -14,7 +14,7 @@ node {
         }
     }
     stage 'run tests and install'
-    my-build.inside {
+    mybuild.inside {
         sh 'ls -la .'
         // sh 'npm install'
     }
