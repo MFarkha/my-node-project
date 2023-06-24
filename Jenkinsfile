@@ -1,5 +1,5 @@
 node {
-    def mybuild = docker.build 'mybuild:$BUILD_NUMBER'
+    def mybuild = docker.build 'mybuild:1.0'
     
     stage 'increment version'{
         mybuild.inside {
