@@ -1,22 +1,22 @@
 node {
-    stage 'init: prepare build environment'
-    checkout scm
-    def mybuild = docker.build 'mybuild:${BUILD_NUMBER}'
+    def mybuild = docker.build 'mybuild:$BUILD_NUMBER'
     
-    stage 'increment version'
-    mybuild.inside {
-        checkout scm
-        dir("app") {
-            sh "npm version minor"
-            def packageJson = readJSON file: 'package.json'
-            def version = packageJson.version
-            env.IMAGE_NAME = "my-node-app-${version}-${BUILD_NUMBER}"
+    stage 'increment version'{
+        mybuild.inside {
+            checkout scm
+            dir("app") {
+                sh "npm version minor"
+                def packageJson = readJSON file: 'package.json'
+                def version = packageJson.version
+                env.IMAGE_NAME = "my-node-app-${version}-${BUILD_NUMBER}"
+            }
         }
     }
-    stage 'run tests and install'
-    mybuild.inside {
-        sh 'ls -la .'
-        // sh 'npm install'
+    stage 'run tests and install' {
+        mybuild.inside {
+            sh 'ls -la .'
+            // sh 'npm install'
+        }
     }
 }
 //     def maven = docker.image('maven:3.3.9-jdk-8'); // https://registry.hub.docker.com/_/maven/
