@@ -20,6 +20,7 @@ node {
             }
         }
     }
+    
     stage ('run tests and install') {
         mybuild.inside {
             dir("app") {
@@ -39,20 +40,20 @@ node {
         }
     }
 
-    // stage('increment version') {
-    //     mybuild.inside {
-    //         withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-    //             sh 'git config --global user.email "jenkins@example.com"'
-    //             sh 'git config --global user.name "jenkins"'
-    //             sh 'git remote set-url origin https://$USER:$PASS@github.com/MFarkha/my-node-project.git'
-    //             sh 'git add .'
-    //             sh 'git commit -m "ci: version bump"'
-    //             sh 'git push origin HEAD:alt_groovy-Jenkinsfile'
-    //         }
-    //     }
-    // }
-
+    stage('increment version') {
+        mybuild.inside {
+            withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                sh 'git config --global user.email "jenkins@example.com"'
+                sh 'git config --global user.name "jenkins"'
+                sh 'git remote set-url origin https://$USER:$PASS@github.com/MFarkha/my-node-project.git'
+                sh 'git add .'
+                sh 'git commit -m "ci: version bump"'
+                sh 'git push origin HEAD:alt_groovy-Jenkinsfile'
+            }
+        }
+    }
 }
+
 //     def maven = docker.image('maven:3.3.9-jdk-8'); // https://registry.hub.docker.com/_/maven/
 
 //     stage('Mirror') {
