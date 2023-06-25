@@ -20,11 +20,10 @@ node {
             }
         }
     }
-    
+
     stage ('run tests and install') {
         mybuild.inside {
             dir("app") {
-                sh 'ls -la .'
                 sh 'npm install'
             }
         }
